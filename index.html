@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>fo-hacking</title>
+    <base href="/">
+    <meta name="description" content="Learning materials about IT work, technology and programming.">
+    <meta name="keywords" content="fallout hacking mini online web game clone technology programming tutorial tips guide career advice blog how-to web apache java javascript linux database mariadb nginx php ruby security selenium testing sqlite typescript vagrant virtualization windows">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all">
+    <meta name="MSNBot-Media" content="noindex" />
+    <meta name="robots" content="max-snippet:160" />
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
+    <link rel="manifest" href="assets/images/favicon/site.webmanifest">
+    <link rel="mask-icon" href="assets/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <script src="./dist/esbuild/browser.js"></script>
+    <style>
+      @font-face {
+        font-family: 'VCR_OSD_MONO_1.001';
+        src: url('games/fo-hacking/assets/fonts/VCR_OSD_MONO_1.001.ttf');
+      }
+      body, html {
+        margin: 0;
+        padding: 0;
+        background-color: black;
+        width: 100%;
+        height: 100%;
+        font-family: Verdana, sans-serif;
+        font-weight: 400;
+      }
+      main {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+      header {
+        background-color: white;
+        height: auto;
+        padding: 12px;
+      }
+      header img {
+        height: 60px;
+      }
+      header h1 {
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin-right: 12px;
+        font-weight: 400;
+        color: #b72424;
+      }
+      header h1:before {
+        content: "›";
+        margin-right: 6px;
+        font-weight: 600;
+        color: #3d7385;
+      }
+      section#display {
+        flex-grow: 1;
+        display: flex;
+        padding: 12px;
+        justify-content: center;
+      }
+      section#display #border {
+        border: 55px ridge gray;
+        align-self: center;
+        object-fit: fill;
+        width: 80vh;
+      }
+      section#display canvas {
+        align-self: center;
+
+        object-fit: fill;
+        width: 80vh;
+
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-crisp-edges;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+      #fps {
+        color: white;
+        display: block;
+        position: fixed;
+        right: 10px;
+        top: 100px;
+      }
+      #letters {
+        position: fixed;
+        right: 10px;
+        top: 130px;
+      }
+      #reset {
+        position: fixed;
+        right: 10px;
+        top: 160px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header><img src="assets/images/kodenkel-logo.png"/><h1>fo-hacking</h1></header>
+      <section id="display">
+        <span id="fps"></span>
+        <select id="letters">
+          <option value="4">4 letter words</option>
+          <option value="5" selected>5 letter words</option>
+          <option value="6">6 letter words</option>
+          <option value="7">7 letter words</option>
+          <option value="8">8 letter words</option>                                        
+          <option value="9">9 letter words</option>
+        </select>
+        <button id="reset">Reset</button>
+        <div id="border"></div>
+      </section>
+    </main>
+  </body>
+</html>
