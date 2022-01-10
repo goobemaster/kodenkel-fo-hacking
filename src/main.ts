@@ -1,6 +1,7 @@
 
 import { CachedJSONData } from './data/CachedJSONData';
 import { DrawingSurface } from './graphics/DrawingSurface';
+import { UserAgent } from './UserAgent';
 
 export class Application {
   private data: CachedJSONData;
@@ -8,6 +9,7 @@ export class Application {
   private readonly maxFPS: number = 21;
   private frameTimestamp: number = Date.now();
   private FPSCounter: HTMLElement;
+  private isMobile: boolean = UserAgent.hasTouchScreen();
 
   private gameState: GameState;
   private wordLength: number = 5;
@@ -94,14 +96,12 @@ export class Application {
       this.reset();
     });
     this.canvas.onMouseMove((event: MouseEvent) => {
-      let canvasElement = this.canvas.getCanvasElement().getBoundingClientRect();
-      let scaleX = this.canvas.getWidth() / canvasElement.width;
-      let scaleY = this.canvas.getHeight() / canvasElement.height;
-
-      this.charMouseX = Math.ceil((event.clientX - canvasElement.left) * scaleX / 12.3) - 2;
-      this.charMouseY = Math.ceil((event.clientY - canvasElement.top) * scaleY / 21) - 1;
+      this.onMouseMove(event);
     });
-    this.canvas.onClick(() => {
+    this.canvas.onClick((event: MouseEvent) => {
+      this.onMouseMove(event); // Mobile patch
+      this.drawCharHighlight();
+
       // Words
       if (this.highlightedWord !== null && this.gameState === GameState.ATTEMPT) {
         if (this.highlightedWord === this.correctPassword) {
@@ -139,8 +139,17 @@ export class Application {
       }
     });
 
-    this.reset();
-    this.draw(1000 / this.maxFPS);
+    if (this.isMobile) {
+      window.addEventListener("deviceorientation", () => {
+        this.onDeviceOrientation();
+      }, true);
+      this.onDeviceOrientation();
+    }
+
+    setTimeout(() => {
+      this.reset();
+      this.draw(1000 / this.maxFPS);
+    }, 1200);
   }
 
   private draw(refreshPeriod: number) {
@@ -156,10 +165,7 @@ export class Application {
         this.canvas.drawRectangle(0, by * 2, 640, by * 2 + 2, by % 2 ? bandColorDark : bandColorLight);
       }
 
-      if ((this.charMouseX >= 7 && this.charMouseX <= 17 && this.charMouseY >= 5 && this.charMouseY <= 21) ||
-      (this.charMouseX >= 26 && this.charMouseX <= 36 && this.charMouseY >= 5 && this.charMouseY <= 21)) {
-        this.highlightCharAbs(this.charMouseX, this.charMouseY);
-      }
+      this.drawCharHighlight();
 
       for (let y = 0; y < this.charHorizontal; y++) {
         this.canvas.drawText(this.lines[y], 15, 21 + 21 * y, 'VCR_OSD_MONO_1.001', 21, '#36fc9b');
@@ -183,6 +189,22 @@ export class Application {
 
       this.draw(refreshPeriod);
     }, refreshPeriod);
+  }
+
+  private onMouseMove(event: MouseEvent) {
+    let canvasElement = this.canvas.getCanvasElement().getBoundingClientRect();
+    let scaleX = this.canvas.getWidth() / canvasElement.width;
+    let scaleY = this.canvas.getHeight() / canvasElement.height;
+
+    this.charMouseX = Math.ceil((event.clientX - canvasElement.left) * scaleX / 12.3) - 2;
+    this.charMouseY = Math.ceil((event.clientY - canvasElement.top) * scaleY / 21) - 1;
+  }
+
+  private drawCharHighlight() {
+    if ((this.charMouseX >= 7 && this.charMouseX <= 17 && this.charMouseY >= 5 && this.charMouseY <= 21) ||
+      (this.charMouseX >= 26 && this.charMouseX <= 36 && this.charMouseY >= 5 && this.charMouseY <= 21)) {
+        this.highlightCharAbs(this.charMouseX, this.charMouseY);
+    }
   }
 
   private highlightCharAbs(x: number, y: number) {
@@ -417,6 +439,24 @@ export class Application {
 
     this.appendStatusLines(['', '>Dud removed.']);
     delete this.passwords[randomPasswordIndex];
+  }
+
+  private onDeviceOrientation() {
+    let portrait: boolean = window.innerHeight > window.innerWidth;
+
+    let displayElement: HTMLElement = document.querySelector('#display');
+    displayElement.style.padding = '0';
+    displayElement.style.width = portrait ? '100%' : 'auto';
+    displayElement.style.height = portrait ? 'auto' : '100%';
+    let displayBorderElement: HTMLElement = document.querySelector('#border');
+    displayBorderElement.style.width = portrait ? '100%' : 'auto';
+    displayBorderElement.style.height = portrait ? 'auto' : '100%';
+    displayBorderElement.style.boxSizing = 'border-box';
+    let canvasElement: HTMLElement = document.querySelector('canvas');
+    canvasElement.style.width = portrait ? '100%' : 'auto';
+    canvasElement.style.height = portrait ? 'auto' : '100%';
+    let headerElement: HTMLElement = document.querySelector('header');
+    headerElement.style.display = portrait ? 'block' : 'none';
   }
 }
 
