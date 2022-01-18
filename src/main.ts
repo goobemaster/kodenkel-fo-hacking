@@ -351,7 +351,6 @@ export class Application {
   }
 
   private reset() {
-    this.gaussY = -1;
     this.passwords = {};
     this.gameState = GameState.ATTEMPT;
     this.statusLines = [];
@@ -385,6 +384,9 @@ export class Application {
         } else {
           // Word
           randomWord = possibleWords[Math.floor(Math.random() * possibleWords.length)];
+          while (Object.values(this.passwords).includes(randomWord)) {
+            randomWord = possibleWords[Math.floor(Math.random() * possibleWords.length)];
+          }
           wordSoup += randomWord;
           this.passwords[i] = randomWord;
           this.wordCount++;
