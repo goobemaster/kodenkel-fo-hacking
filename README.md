@@ -8,6 +8,10 @@ You can try it out at: https://www.kodenkel.com/games/fo-hacking/
 
 Have fun!
 
+If you like this project, or found it useful:
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/kodenkel)
+
 ## Pre-requisites
 
 - NodeJS
