@@ -95,6 +95,9 @@ export class Application {
       this.wordLength = parseInt((event.target as HTMLSelectElement).value);
       this.reset();
     });
+    document.querySelector("#help").addEventListener('click', () => {
+      window.open('https://fallout.fandom.com/wiki/Hacking_(Fallout_3)', '_blank');
+    });
     this.canvas.onMouseMove((event: MouseEvent) => {
       this.onMouseMove(event);
     });
@@ -102,39 +105,46 @@ export class Application {
       this.onMouseMove(event); // Mobile patch
       this.drawCharHighlight();
 
-      // Words
-      if (this.highlightedWord !== null && this.gameState === GameState.ATTEMPT) {
-        if (this.highlightedWord === this.correctPassword) {
-          // Correct Password, Won
-          this.appendStatusLines(['', 'is accessed.', 'while system', 'Please wait', 'Exact match!', '']);
-          this.lines[1] = '';
-          this.lines[3] = 'ACCESS GRANTED';
-          this.gameState = GameState.MATCH;
-        } else {
-          // Incorrect password
-          let numCorrect: number = 0;
-          for (let i = 0; i < this.correctPassword.length; i++) {
-            if (this.correctPassword.charAt(i) === this.highlightedWord.charAt(i)) numCorrect++;
+      if (this.gameState === GameState.ATTEMPT) {
+        // Words
+        if (this.highlightedWord !== null && this.gameState === GameState.ATTEMPT) {
+          if (this.highlightedWord === this.correctPassword) {
+            // Correct Password, Won
+            this.appendStatusLines(['', 'is accessed.', 'while system', 'Please wait', 'Exact match!', '']);
+            this.lines[1] = '';
+            this.lines[3] = 'ACCESS GRANTED';
+            this.gameState = GameState.MATCH;
+          } else {
+            // Incorrect password
+            let numCorrect: number = 0;
+            for (let i = 0; i < this.correctPassword.length; i++) {
+              if (this.correctPassword.charAt(i) === this.highlightedWord.charAt(i)) numCorrect++;
+            }
+            this.appendStatusLines(['', `>${numCorrect.toString()}/${this.wordLength} correct.`, '>Entry denied', '>' + this.highlightedWord.toUpperCase()]);
+            this.deductAttempt();
           }
-          this.appendStatusLines(['', `>${numCorrect.toString()}/${this.wordLength} correct.`, '>Entry denied', '>' + this.highlightedWord.toUpperCase()]);
-          this.deductAttempt();
         }
-      }
-      // Blocks
-      if (this.highlightedBlockStart !== null && this.highlightedBlockEnd !== null) {
-        let wordSoupPos: {x: number, y: number} = this.wordSoupPosToCharAbs(this.highlightedBlockStart);
-        let substituteText: string = '';
-        for (let i = 0; i < this.highlightedBlockEnd - this.highlightedBlockStart; i++) {
-          substituteText += this.punctuationNonBlocky[Math.floor(Math.random() * this.punctuationNonBlocky.length)];
-        }
-        this.lines[wordSoupPos.y] = this.lines[wordSoupPos.y].substring(0, wordSoupPos.x) + substituteText + this.lines[wordSoupPos.y].substring(wordSoupPos.x + substituteText.length);
+        // Blocks
+        if (this.highlightedBlockStart !== null && this.highlightedBlockEnd !== null) {
+          let wordSoupPos: {x: number, y: number} = this.wordSoupPosToCharAbs(this.highlightedBlockStart);
+          let substituteText: string = '';
+          for (let i = 0; i < this.highlightedBlockEnd - this.highlightedBlockStart; i++) {
+            substituteText += this.punctuationNonBlocky[Math.floor(Math.random() * this.punctuationNonBlocky.length)];
+          }
+          this.lines[wordSoupPos.y] = this.lines[wordSoupPos.y].substring(0, wordSoupPos.x) + substituteText + this.lines[wordSoupPos.y].substring(wordSoupPos.x + substituteText.length);
 
-        if (Math.floor(Math.random() * 3) < 1) {
-          // Reset Tries
-          this.resetTries();
-        } else {
-          // Remove dud
-          this.removeDud();
+          if (Math.floor(Math.random() * 3) < 1) {
+            // Reset Tries
+            this.resetTries();
+          } else {
+            // Remove dud
+            if (Object.keys(this.passwords).length > 1) {
+              this.removeDud();
+            } else {
+              // Except when only the correct password remained (Bugfix #4)
+              this.resetTries();
+            }          
+          }
         }
       }
     });

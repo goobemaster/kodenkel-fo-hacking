@@ -22,7 +22,7 @@
     <style>
       @font-face {
         font-family: 'VCR_OSD_MONO_1.001';
-        src: url('games/fo-hacking/assets/fonts/VCR_OSD_MONO_1.001.ttf');
+        src: url('assets/fonts/VCR_OSD_MONO_1.001.ttf');
       }
       body, html {
         margin: 0;
@@ -95,11 +95,17 @@
         position: fixed;
         right: 10px;
         top: 130px;
+        width: 110px;
       }
-      #reset {
+      #reset, #help {
         position: fixed;
         right: 10px;
         top: 160px;
+        width: 110px;
+        text-align: left;
+      }
+      #help {
+        top: 190px;
       }
     </style>
   </head>
@@ -116,7 +122,8 @@
           <option value="8">8 letter words</option>                                        
           <option value="9">9 letter words</option>
         </select>
-        <button id="reset">Reset</button>
+        <button id="reset">🔃 Reset</button>
+        <button id="help">📖 How to play</button>
         <div id="border"></div>
       </section>
     </main>
